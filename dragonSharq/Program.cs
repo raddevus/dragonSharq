@@ -24,7 +24,6 @@ void WebSourceWorkerDoWork(object sender, System.ComponentModel.DoWorkEventArgs 
     {
         
     }
-
 }
 
 void GetWebSource()
@@ -51,9 +50,9 @@ void GetWebSource()
     try 
     {
         webreq = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(strUri);
-        if (args.Length > 1)
+        if (args.Length > 2)
         {
-            webreq.UserAgent  = args[1];
+            webreq.UserAgent  = args[2];
         }
         else{
             webreq.UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.3";
@@ -70,8 +69,16 @@ void GetWebSource()
     StreamReader strrdr = new StreamReader(stream); 
     string strLine; 
     int line = 1; 
+    bool headersOnly = false;
 
-    while (((strLine = strrdr.ReadLine()) != null))// && (!webSourceWorker.CancellationPending))
+    // if user sets the 2nd arg to any value 
+    // then we only get headers
+    if (args.Length == 2){
+        headersOnly = true;
+    }
+
+
+    while (!headersOnly && ((strLine = strrdr.ReadLine()) != null))// && (!webSourceWorker.CancellationPending))
     {
         Console.WriteLine( $"{strLine}");
         ++line;
