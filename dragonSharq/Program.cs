@@ -1,9 +1,11 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.ComponentModel;
 
+List<String> allHttpHeaders = new();
 Console.WriteLine("Hello, World!");
-string tempFile = System.IO.Path.GetTempFileName();
-Console.WriteLine($"tempFile => {tempFile}");
+// #### NOTE: Not using tempfile yet so commenting it out for now.
+// string tempFile = System.IO.Path.GetTempFileName();
+// Console.WriteLine($"tempFile => {tempFile}");
 
 /*BackgroundWorker webSourceWorker = new BackgroundWorker();
 webSourceWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(WebSourceWorkerDoWork);
@@ -80,15 +82,17 @@ void GetWebSource()
         }
     }
         
-    /* foreach (string key in webres.Headers.Keys)
+    foreach (string key in webres.Headers.Keys)
     {
-        responseHeadersDropList.Items.Add(string.Format("{0} = {1}",
-            key,webres.Headers[key]));
+        allHttpHeaders.Add($"{key} = {webres.Headers[key]}");
     }
-    if (responseHeadersDropList.Items.Count > 0)
+    if (allHttpHeaders.Count > 0)
     {
-        responseHeadersDropList.SelectedIndex = 0;
-    }*/ 
+        Console.WriteLine("## HTTP HEADERS ##");
+        foreach (String s in allHttpHeaders){
+            Console.WriteLine(s);
+        }
+    }
 }
 
 string CheckForUrlPrefix(string inUrl)
