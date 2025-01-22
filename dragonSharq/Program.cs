@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.ComponentModel;
+using System.Text;
 
 List<String> allHttpHeaders = new();
 Console.WriteLine("Hello, World!");
@@ -7,100 +8,36 @@ Console.WriteLine("Hello, World!");
 // string tempFile = System.IO.Path.GetTempFileName();
 // Console.WriteLine($"tempFile => {tempFile}");
 
-/*BackgroundWorker webSourceWorker = new BackgroundWorker();
-webSourceWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(WebSourceWorkerDoWork);
-webSourceWorker.RunWorkerAsync();*/
+HttpResponseMessage response = await CreateWebRequest();
+Console.WriteLine($"{response.Content.Headers.Count()} : {response.Content.ReadAsStream().Length}");
 
-GetWebSource();
+byte [] buffer = new byte[response.Content.ReadAsStream().Length];
 
-void WebSourceWorkerDoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-{
-    try
-    {
-        Console.WriteLine("I'm in DoWork...");
-        GetWebSource();
-    }
-    finally
-    {
-        
-    }
+var bytesRead = response.Content.ReadAsStream().Read(buffer,0,buffer.Length);
+
+Console.WriteLine( $"{Encoding.UTF8.GetString(buffer)}");
+
+foreach (var h in response.Content.Headers){
+    Console.WriteLine($"{h.Key} = {h.Value.First()}");
 }
 
-void GetWebSource()
-{
+async Task<HttpResponseMessage> CreateWebRequest()
+ {
     if (args.Length < 1){
         Console.WriteLine("Need a URL.");
-        return;
+        return new HttpResponseMessage();
     }
     string strUri = args[0];
     Console.WriteLine($"retrieving {strUri}");
     
-    strUri = CheckForUrlPrefix(strUri);
-    // urlComboBox.Text = strUri;
-    
-    /*bool isAdded = visitedUrls.TryAdd(strUri.ToUpper(),strUri);
-    if (isAdded)
-    {
-        urlComboBox.Items.Add(strUri);
-    }*/ 
-    
-    System.Net.HttpWebRequest webreq; 
-    
-    System.Net.WebResponse webres; 
-    try 
-    {
-        webreq = (System.Net.HttpWebRequest)System.Net.HttpWebRequest.Create(strUri);
-        if (args.Length > 2)
-        {
-            webreq.UserAgent  = args[2];
-        }
-        else{
-            webreq.UserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.3";
-        }
-        webres = webreq.GetResponse(); 
-    } 
-    catch (Exception exc) 
-    {
-        Console.WriteLine(exc.Message);
-        return; 
-    } 
-    Console.WriteLine("In here...");
-    Stream stream = webres.GetResponseStream();
-    StreamReader strrdr = new StreamReader(stream); 
-    string strLine; 
-    int line = 1; 
-    bool headersOnly = false;
-
-    // if user sets the 2nd arg to any value 
-    // then we only get headers
-    if (args.Length == 2){
-        headersOnly = true;
-    }
-
-
-    while (!headersOnly && ((strLine = strrdr.ReadLine()) != null))// && (!webSourceWorker.CancellationPending))
-    {
-        Console.WriteLine( $"{strLine}");
-        ++line;
-        // only update every 100 lines 
-        if ((line %100) == 0)
-        {
-        //    htmlViewText.Update();
-        }
-    }
+    strUri = CheckForUrlPrefix(strUri); 
+      var httpClient = new HttpClient();
+      var httpContent = new StringContent("", Encoding.UTF8, "text/xml");
+      // httpContent.Headers.Add("SOAPAction", action);
+      var httpResponse = await httpClient.GetAsync(strUri);
         
-    foreach (string key in webres.Headers.Keys)
-    {
-        allHttpHeaders.Add($"{key} = {webres.Headers[key]}");
-    }
-    if (allHttpHeaders.Count > 0)
-    {
-        Console.WriteLine("## HTTP HEADERS ##");
-        foreach (String s in allHttpHeaders){
-            Console.WriteLine(s);
-        }
-    }
-}
+      return httpResponse;
+ }
 
 string CheckForUrlPrefix(string inUrl)
 {
