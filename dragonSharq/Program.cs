@@ -15,9 +15,33 @@ byte [] buffer = new byte[response.Content.ReadAsStream().Length];
 
 var bytesRead = response.Content.ReadAsStream().Read(buffer,0,buffer.Length);
 
-Console.WriteLine( $"{Encoding.UTF8.GetString(buffer)}");
+var retrievedHTML = $"{Encoding.UTF8.GetString(buffer)}";
 
-foreach (var h in response.Content.Headers){
+if (args.Length > 1){
+    switch (args[1]){
+        case "-file":{
+            if (args[2] == null){
+                Console.WriteLine("If you're saving to file, please provide the file name.");
+                return;
+            }
+            File.WriteAllText(args[2],retrievedHTML);
+            break;
+        }
+        case "-headers":{
+            foreach (var h in response.Headers){
+               Console.WriteLine($"{h.Key} = {h.Value.First()}");
+            }
+            return;
+        }
+    }
+}
+else{
+    Console.WriteLine( retrievedHTML);
+}
+
+
+
+foreach (var h in response.Headers){
     Console.WriteLine($"{h.Key} = {h.Value.First()}");
 }
 
