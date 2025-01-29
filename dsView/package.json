@@ -1,0 +1,19 @@
+{
+  "name": "dsview",
+  "version": "1.0.0",
+  "description": "DragonSharq viewer running on ElectronJS",
+  "main": "js/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "cl",
+    "web-browser"
+  ],
+  "author": "roger deutsch",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^34.0.1"
+  }
+}
