@@ -5,7 +5,12 @@ const { app, BrowserWindow } = require('electron/main')
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    webPreferences:{
+      javascript: false,
+      devTools: true,
+      }
+    
   })
 
   win.loadFile('index.htm')
