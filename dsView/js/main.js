@@ -1,7 +1,11 @@
 // main.js
 
 const { app, BrowserWindow } = require('electron/main')
-let xwin = null;
+const args = process.argv;
+console.log(`${args.length} : ${args}`);
+
+const jsIsOn = args[2];
+console.log(`jsIsOn: ${jsIsOn}`);
 const createWindow = () => {
   const win = new BrowserWindow({
     width: 800,
@@ -9,11 +13,11 @@ const createWindow = () => {
     // webPreferences: {
     //   zoomFactor: 1,
     // },
-    // webPreferences:{
-    //   javascript: true,
-    //   //devTools: true,
-    //   zoomFactor: 1,
-    //   }
+    webPreferences:{
+      javascript: jsIsOn == undefined ? false : true,
+      //devTools: true,
+      //zoomFactor: 1,
+      }
     
   })
   win.loadFile('index.htm');
