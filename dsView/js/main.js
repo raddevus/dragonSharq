@@ -39,6 +39,7 @@ const createWindow = () => {
   const { navigationHistory } = win.webContents;
   if (loadIndexHtm){
     win.loadFile('index.htm');
+//     win.webContents.openDevTools(); // used to display devTools
   }
   else{
     win.loadURL(targetUrl);
@@ -79,7 +80,6 @@ const createWindow = () => {
 app.whenReady().then(() => {
 
   createWindow()
-  
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow()
